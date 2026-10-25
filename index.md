@@ -50,32 +50,39 @@ In modern web development, containerization with Docker is ubiquitous. However, 
 
 Below is the bird's-eye architectural blueprint of how all native components connect and communicate on your workstation:
 
+![Master Architecture Diagram](https://mermaid.ink/img/graph%20TD%0A%20%20%20%20Client%5B%22Developer%20Browser%20/%20Bruno%20API%20Client%22%5D%20--%3E%7CPort%2080%20HTTP%20/%20443%20HTTPS%7C%20Nginx%5B%22Nginx%20Web%20Server%20%26%20Reverse%20Proxy%22%5D%0A%0A%20%20%20%20subgraph%20Web_Routing%20%5B%22Virtual%20Host%20Routing%22%5D%0A%20%20%20%20%20%20%20%20Nginx%20--%3E%7CUnix%20Socket%3A%20/run/php/php8.5-fpm.sock%7C%20Laravel%5B%22Laravel%20App%20laravel.test%22%5D%0A%20%20%20%20%20%20%20%20Nginx%20--%3E%7CUnix%20Socket%3A%20/run/php/php8.5-fpm.sock%7C%20WP%5B%22WordPress%20wp.test%22%5D%0A%20%20%20%20%20%20%20%20Nginx%20--%3E%7CUnix%20Socket%3A%20/run/php/php8.5-fpm.sock%7C%20PMA%5B%22PHPMyAdmin%20localhost/phpmyadmin%22%5D%0A%20%20%20%20%20%20%20%20Nginx%20--%3E%7CHTTP%20Proxy%3A%20localhost%3A3000%7C%20NextJS%5B%22Node.js%20/%20Next.js%20/%20Vite%20Apps%22%5D%0A%20%20%20%20end%0A%0A%20%20%20%20subgraph%20Databases%20%5B%22High-Performance%20Native%20Storage%22%5D%0A%20%20%20%20%20%20%20%20Laravel%20--%3E%7CSocket%20/%20Port%203306%7C%20MySQL%5B%22MySQL%208.4%20Server%22%5D%0A%20%20%20%20%20%20%20%20Laravel%20--%3E%7CSocket%20/%20Port%205432%7C%20Postgres%5B%22PostgreSQL%2018%20Server%22%5D%0A%20%20%20%20%20%20%20%20Laravel%20--%3E%7CPort%206379%7C%20Redis%5B%22Redis%208.0%20Cache%20%26%20Queue%20Worker%22%5D%0A%20%20%20%20%20%20%20%20WP%20--%3E%7CSocket%20/%20Port%203306%7C%20MySQL%0A%20%20%20%20%20%20%20%20PMA%20--%3E%7CSocket%20/%20Port%203306%7C%20MySQL%0A%20%20%20%20end%0A%0A%20%20%20%20subgraph%20Management%20%5B%22Management%20Cockpit%20%26%20Tools%22%5D%0A%20%20%20%20%20%20%20%20DBeaver%5B%22DBeaver%20Community%20Edition%22%5D%20--%3E%7CNative%20Local%20%26%20SSH%20Tunneling%7C%20MySQL%0A%20%20%20%20%20%20%20%20DBeaver%20--%3E%7CNative%20Local%20%26%20SSH%20Tunneling%7C%20Postgres%0A%20%20%20%20%20%20%20%20DBeaver%20--%3E%7CNative%20Local%20%26%20SSH%20Tunneling%7C%20Redis%0A%20%20%20%20%20%20%20%20DBeaver%20-.-%3E%7CRemote%20Bastion%20/%20Private%20VPC%7C%20CloudDB%5B%22AWS%20RDS%20/%20DigitalOcean%20/%20Cloud%20DBs%22%5D%0A%20%20%20%20end%0A)
+
+<details>
+<summary>🔍 Click to view raw Mermaid Diagram Code</summary>
+
 ```mermaid
 graph TD
-    Client["🌐 Developer Browser / Bruno API Client"] -->|Port 80 (HTTP) / 443 (HTTPS)| Nginx["Nginx Reverse Proxy & Web Server"]
+    Client["Developer Browser / Bruno API Client"] -->|Port 80 HTTP / 443 HTTPS| Nginx["Nginx Web Server & Reverse Proxy"]
 
-    subgraph Web_Routing ["Nginx Virtual Host Routing"]
-        Nginx -->|Unix Socket: /run/php/php8.5-fpm.sock| Laravel["🚀 Laravel App (laravel.test)"]
-        Nginx -->|Unix Socket: /run/php/php8.5-fpm.sock| WP["📝 WordPress (wp.test)"]
-        Nginx -->|Unix Socket: /run/php/php8.5-fpm.sock| PMA["🗄️ PHPMyAdmin (localhost/phpmyadmin)"]
-        Nginx -->|HTTP Proxy: localhost:3000| NextJS["⚡ Node.js / Next.js / Vite Apps"]
+    subgraph Web_Routing ["Virtual Host Routing"]
+        Nginx -->|Unix Socket: /run/php/php8.5-fpm.sock| Laravel["Laravel App laravel.test"]
+        Nginx -->|Unix Socket: /run/php/php8.5-fpm.sock| WP["WordPress wp.test"]
+        Nginx -->|Unix Socket: /run/php/php8.5-fpm.sock| PMA["PHPMyAdmin localhost/phpmyadmin"]
+        Nginx -->|HTTP Proxy: localhost:3000| NextJS["Node.js / Next.js / Vite Apps"]
     end
 
     subgraph Databases ["High-Performance Native Storage"]
-        Laravel -->|Socket / Port 3306| MySQL["🐬 MySQL 8.4 Server"]
-        Laravel -->|Socket / Port 5432| Postgres["🐘 PostgreSQL 18 Server"]
-        Laravel -->|Port 6379| Redis["⚡ Redis 8.0 Cache & Queue Worker"]
+        Laravel -->|Socket / Port 3306| MySQL["MySQL 8.4 Server"]
+        Laravel -->|Socket / Port 5432| Postgres["PostgreSQL 18 Server"]
+        Laravel -->|Port 6379| Redis["Redis 8.0 Cache & Queue Worker"]
         WP -->|Socket / Port 3306| MySQL
         PMA -->|Socket / Port 3306| MySQL
     end
 
     subgraph Management ["Management Cockpit & Tools"]
-        DBeaver["🦅 DBeaver Community Edition"] -->|Native Local & SSH Tunneling| MySQL
+        DBeaver["DBeaver Community Edition"] -->|Native Local & SSH Tunneling| MySQL
         DBeaver -->|Native Local & SSH Tunneling| Postgres
         DBeaver -->|Native Local & SSH Tunneling| Redis
-        DBeaver -.->|Remote Bastion / Private VPC| CloudDB["☁️ AWS RDS / DigitalOcean / Cloud DBs"]
+        DBeaver -.->|Remote Bastion / Private VPC| CloudDB["AWS RDS / DigitalOcean / Cloud DBs"]
     end
+
 ```
+</details>
 
 ### Official Host Port & Socket Allocations
 
@@ -400,7 +407,9 @@ sudo apt install -y dbeaver-ce
 
 ### 9.4 Pro-Tip: Connecting to Remote Databases Behind a Firewall / Bastion
 To connect to an AWS RDS or remote database not exposed to the public internet:
-1. Open DBeaver $ightarrow$ **New Database Connection** $ightarrow$ Choose **MySQL** or **PostgreSQL**.
+1. Open DBeaver $
+ightarrow$ **New Database Connection** $
+ightarrow$ Choose **MySQL** or **PostgreSQL**.
 2. In the **Main** tab, enter the database host (e.g. `127.0.0.1` or the private RDS VPC endpoint) and credentials.
 3. Switch to the **SSH** tab:
    - Check **"Use SSH Tunnel"**.
