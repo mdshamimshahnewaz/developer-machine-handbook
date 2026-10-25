@@ -7,6 +7,11 @@
 > **Target Audience:** Professional Full-Stack Software Engineers, Laravel/PHP Developers, Frontend Engineers, and Systems Tinkerers  
 > **Generated Timestamp:** 2026-10-25 23:15 UTC+6  
 
+> 🌟 **Looking for the new Complete Workstation Guide (v2)?**  
+> An upgraded post-audit edition has been published with full Python/Django/DRF, Ed25519 SSH, UFW Firewall & localhost binding, targeted cache pruning, backup playbook, and modular profiles.  
+> 📖 **Read Guide v2:** [The Complete Ubuntu Developer Workstation Guide (v2)](ubuntu-developer-environment-guide.html) | 🔗 [New GitHub Gist (v2)](https://gist.github.com/mdshamimshahnewaz/a0ce5ec2d7fd507733722e73c87bb96e)
+
+
 ---
 
 ## 📑 Table of Contents
