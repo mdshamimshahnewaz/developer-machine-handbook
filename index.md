@@ -201,7 +201,13 @@ Ubuntu 26.04 provides **PHP 8.5** natively. We install PHP-FPM alongside the com
 
 ```bash
 # 1. Install PHP CLI, FPM, and all essential modules
-sudo apt install -y php-cli php-fpm php-mysql php-pgsql php-sqlite3                     php-redis php-curl php-gd php-mbstring php-xml                     php-zip php-bcmath php-intl php-soap
+# Detect Ubuntu version for PHP packages
+UBUNTU_VER=$(lsb_release -rs)
+if [[ "$UBUNTU_VER" == "24.04" ]]; then
+    sudo apt install -y php8.2 php8.2-fpm php8.2-cli php8.2-mysql php8.2-xml php8.2-mbstring php8.2-zip php8.2-redis php8.2-curl php8.2-gd php8.2-bcmath php8.2-intl php8.2-soap
+else
+    sudo apt install -y php8.5 php8.5-fpm php8.5-cli php8.5-mysql php8.5-xml php8.5-mbstring php8.5-zip php8.5-redis php8.5-curl php8.5-gd php8.5-bcmath php8.5-intl php8.5-soap
+fi
 
 # 2. Enable and start PHP-FPM daemon
 sudo systemctl enable --now php8.5-fpm 2>/dev/null || sudo systemctl enable --now php*-fpm
